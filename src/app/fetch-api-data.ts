@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { Observable, throwError } from 'rxjs';
 
 //Declaring the api url that will provide data for the client app
-const apiUrl = 'https://moviefy-288671c73ad6.herokuapp.com/movies/'
+const apiUrl = 'https://moviefy-288671c73ad6.herokuapp.com/'
 @Injectable({
   providedIn: 'root',
 })
@@ -29,6 +29,7 @@ export class UserRegistrationService {
       console.error(
         `Error Status code ${error.status}, ` +
         `Error body is ${error.error}`);
+        JSON.stringify(error.error, null, 2);
     }
     return throwError(
       'Something bad happened; please try again later.'
@@ -37,8 +38,12 @@ export class UserRegistrationService {
  
  // API call to log in
   public userLogin(userDetails: any): Observable<any> {
+    const payload = {
+      Username: userDetails.Username,
+      Password: userDetails.Password
+    }
     console.log(userDetails);
-    return this.http.post(apiUrl + 'login', userDetails).pipe(
+    return this.http.post(apiUrl + 'login', payload).pipe(
       catchError(this.handleError)
     );
   }
