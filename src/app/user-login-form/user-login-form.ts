@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormField, MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatAnchor, MatButtonModule } from "@angular/material/button";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-login-form',
@@ -20,12 +21,13 @@ export class UserLoginFormComponent implements OnInit {
   constructor (
     public userRegistrationService: UserRegistrationService,
     public dialogRef: MatDialogRef<UserLoginFormComponent>,
-    public snackBar: MatSnackBar) { }
+    public snackBar: MatSnackBar,
+    public router: Router) { }
 
   ngOnInit(): void {
   }
 
-  loginUser(): void{
+  loginUser(): void {
     this.userRegistrationService.userLogin(this.userDetails).subscribe((response) => {
       localStorage.setItem('currentUser', JSON.stringify(response.user));
       localStorage.setItem('token', response.token);
@@ -35,6 +37,8 @@ export class UserLoginFormComponent implements OnInit {
       this.snackBar.open(response.message || 'Login successful!', 'OK', {
         duration: 2000
       });
+
+      this.router.navigate(['movies']);
     }, (response) => {
       console.log(response);
       this.snackBar.open(response.error?.message || 'Login failed.', 'OK', {

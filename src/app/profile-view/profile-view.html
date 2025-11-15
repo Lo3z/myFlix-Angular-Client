@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<button mat-button routerLink='/movies'>Movies</button>
+<div class = "profile container">
+  <mat-card class="profile-card">
+    <mat-card-title>User Profile</mat-card-title>
+
+    <div class="profile-field">
+      <mat-form-field appearance="fill">
+        <mat-label>Username</mat-label>
+        <input
+          matInput
+          [(ngModel)]="user.Username"
+        >
+      </mat-form-field>
+    </div>
+
+    <div class="profile-field">
+      <mat-form-field appearance="fill">
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          type="password"
+          [(ngModel)]="user.Password"
+        >
+      </mat-form-field>
+    </div>
+
+    <div class="profile-field">
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input
+          matInput
+          [(ngModel)]="user.Email"
+        >
+      </mat-form-field>
+    </div>
+
+    <div class="profile-field">
+      <mat-form-field appearance="fill">
+        <mat-label>Birthday</mat-label>
+        <input
+          matInput
+          type="date"
+          [(ngModel)]="user.Birthday"
+        >
+      </mat-form-field>
+    </div>
+  </mat-card>
+  <div class="button-grid">
+    <button mat-raised-button color="primary" (click)="updateUser()">Save Changes</button>
+    <button mat-raised-button color="warn" (click)="deleteUser()">Delete Account</button>
+  </div>
+  <mat-card class="favorites-card">
+    <mat-card-title>Your Favorites</mat-card-title>
+    <div class="favorites-grid">
+      <app-movie-card
+        *ngFor="let movie of favoriteMovies"
+        [movie]="movie">
+      </app-movie-card>
+    </div>
+  </mat-card>
+</div>

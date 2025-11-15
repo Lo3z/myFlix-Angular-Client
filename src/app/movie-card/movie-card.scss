@@ -1,0 +1,28 @@
+.movie-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  padding: 16px;
+  justify-content: flex-start;
+}
+
+.movie-image-container {
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+}
+
+.movie-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.clicked {
+  background-color: red;
+}
+
+.not-clicked {
+  background-color: blue;
+}

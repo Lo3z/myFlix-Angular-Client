@@ -1,5 +1,5 @@
 import { ApplicationConfig, importProvidersFrom, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withRouterConfig } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
@@ -14,12 +14,20 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
 
+import { RouterModule, Routes } from '@angular/router';
+import { WelcomePageComponent } from './welcome-page/welcome-page';
+import { MovieCardComponent } from './movie-card/movie-card';
+
+import { MatIconModule } from '@angular/material/icon';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
-    provideRouter(routes), provideClientHydration(withEventReplay()),
+    provideRouter(routes, withRouterConfig ({
+      onSameUrlNavigation: 'reload'
+    })), provideClientHydration(withEventReplay()),
     provideHttpClient(),
-    importProvidersFrom(MatCardModule),
+    importProvidersFrom(MatCardModule, MatIconModule),
   ]
 };
