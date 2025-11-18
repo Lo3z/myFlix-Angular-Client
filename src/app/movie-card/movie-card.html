@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <button mat-button routerLink='/profile'>Profile</button>
-<div style="display: flex;" *ngIf="(movies | async)?.length ">
+<div style="display: flex;" *ngIf="(movies | async)?.length">
   <mat-card *ngFor="let movie of (movies|async); let i=index;" class="movie-grid">
       <mat-card-header>
         <mat-card-title style="font-size: 15px">{{movie.Name || movie.Title}}</mat-card-title>
@@ -39,5 +39,5 @@
           {{ isFavorite(movie) ? 'favorite': 'favorite_border' }}
         </mat-icon>
       </mat-card-actions>
-  </mat-card>>
+  </mat-card>
 </div>

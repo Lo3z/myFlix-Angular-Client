@@ -23,8 +23,8 @@ import { Router } from '@angular/router';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MovieCardComponent,
     RouterModule,
+    // MovieCardComponent,
   ],
   templateUrl: './profile-view.html',
   styleUrl: './profile-view.scss',
@@ -42,10 +42,12 @@ export class ProfileViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUser();
+    console.log("user loaded from localStorage: ", this.user);
   }
 
   // Load current user from localStorage
   loadUser(): void {
+    console.log("start loadUser() user = ", JSON.parse(localStorage.getItem('currentUser') || '{}'));
     const user = localStorage.getItem('currentUser');
 
     if (user) {
@@ -61,22 +63,17 @@ export class ProfileViewComponent implements OnInit {
   loadFavoriteMovies(movieIDs: string[]): void {
     if (!movieIDs || movieIDs.length == 0) {
       this.favoriteMovies = [];
-      return;
     }
+    else{
+      console.log("user favorites from localstorage: ", movieIDs)
 
-    const movieObservables = movieIDs.map(_id => this.userRegistrationService.getMovie(_id));
-    forkJoin(movieObservables).subscribe({
-      next: (movies) => {
-        this.favoriteMovies = movies;
-
-        const currentUser = { ...this.user, Favorites: this.favoriteMovies.map(m => m._id) };
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        this.user = currentUser;
-      },
-      error: (err) => {
-        console.error('Failed to load favorite movies: ', err);
-      }
-    });
+      this.userRegistrationService.getAllMovies().subscribe({
+        next: (movies) => {
+          console.log("all movies: ", movies.map((m:any)=>m._id))
+          this.favoriteMovies = movies.filter((m: { _id: string; }) => movieIDs.includes(m._id));
+        }
+      });
+    }
   }
 
 
@@ -94,8 +91,10 @@ export class ProfileViewComponent implements OnInit {
       Password: this.user.Password,
       Email: this.user.Email,
       Birthday: this.user.Birthday,
+      Favorites: this.user.Favorites,
     };
 
+    console.log("updatedUser being sent: ", updatedUser);
     this.userRegistrationService.editUser(username, updatedUser).subscribe((result: any) => {
       // Update localStorage with new info
       localStorage.setItem('currentUser', JSON.stringify(result));

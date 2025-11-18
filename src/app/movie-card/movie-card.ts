@@ -17,7 +17,9 @@ import { RouterModule } from '@angular/router';
 })
 
 export class MovieCardComponent {
+  @Input() filter?: any[];
   @Input() movie: any;
+
   movies = new BehaviorSubject<any[]>([])
   userFavorites: string[] = [];
   constructor(
