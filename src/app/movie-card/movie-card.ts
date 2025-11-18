@@ -34,6 +34,7 @@ export class MovieCardComponent {
     this.loadFavorites();
   }
 
+  // Pulling all movies from API to display.
   getMovies(): void {
     this.userRegistrationService.getAllMovies().subscribe((resp: any) => {
       console.log(this.movies);
@@ -41,6 +42,7 @@ export class MovieCardComponent {
     });
   }
 
+  // Loading in favorite movies from user.
   loadFavorites(): void {
     const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
     if (user && user.Favorites) {
@@ -48,34 +50,64 @@ export class MovieCardComponent {
     }
   }
 
+
   isFavorite(movie: any): boolean {
     return this.userFavorites.includes(movie._id);
   }
 
+  // Toggle Favorites function fired when user clicks Favorite icon.
   toggleFavorite(movie: any): void {
     const user = JSON.parse(localStorage.getItem('currentUser')!);
     const username = user.Username;
-    const movieID = movie._id || movie.id;
     console.log('user: ', user);
 
-    if (!username || !movieID) {
+    if (!username || !movie._id) {
       console.error('Missing username or movieID');
       return;
     }
 
-    if (this.isFavorite(movie)) {
-      this.userRegistrationService.removeFavorites(username, movieID).subscribe(() => {
-        this.userFavorites = this.userFavorites.filter(id => id !== movie._id);
-        this.updateLocalUser();
-      });
+    // New Toggle Favorites (functional)
+    const isFav = this.userFavorites.includes(movie._id);
+
+    if (isFav) {
+      this.userFavorites = this.userFavorites.filter(_id => _id !==movie._id);
     } else {
-      this.userRegistrationService.addFavorites(username, movieID).subscribe(() => {
-        this.userFavorites.push(movie._id);
-        this.updateLocalUser();
-      });
+      this.userFavorites = [...this.userFavorites, movie._id];
     }
+    this.updateLocalUser();
+
+    const updateFavorite = isFav
+      ? this.userRegistrationService.removeFavorites(username, movie._id)
+      : this.userRegistrationService.addFavorites(username, movie._id);
+    
+    updateFavorite.subscribe({
+      error: () => {
+        console.error("failed to update favorite");
+
+        if (isFav) {
+          this.userFavorites.push(movie._id);
+        } else {
+          this.userFavorites = this.userFavorites.filter(_id => _id !==movie._id)
+        }
+        this.updateLocalUser();
+      }
+    });
+
+    // Old toggle favorites (unfunctional)
+    // if (this.isFavorite(movie)) {
+    //   this.userRegistrationService.removeFavorites(username, movie._id).subscribe(() => {
+    //     this.userFavorites = this.userFavorites.filter(id => id !== movie._id);
+    //     this.updateLocalUser();
+    //   });
+    // } else {
+    //   this.userRegistrationService.addFavorites(username, movie._id).subscribe(() => {
+    //     this.userFavorites.push(movie._id);
+    //     this.updateLocalUser();
+    //   });
+    // }
   }
 
+  // Updates the local storage with most recent user info. 
   updateLocalUser(): void {
     const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
     user.Favorites = this.userFavorites;

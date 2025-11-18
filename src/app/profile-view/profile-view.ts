@@ -47,7 +47,6 @@ export class ProfileViewComponent implements OnInit {
 
   // Load current user from localStorage
   loadUser(): void {
-    console.log("start loadUser() user = ", JSON.parse(localStorage.getItem('currentUser') || '{}'));
     const user = localStorage.getItem('currentUser');
 
     if (user) {
@@ -65,11 +64,9 @@ export class ProfileViewComponent implements OnInit {
       this.favoriteMovies = [];
     }
     else{
-      console.log("user favorites from localstorage: ", movieIDs)
 
       this.userRegistrationService.getAllMovies().subscribe({
         next: (movies) => {
-          console.log("all movies: ", movies.map((m:any)=>m._id))
           this.favoriteMovies = movies.filter((m: { _id: string; }) => movieIDs.includes(m._id));
         }
       });
