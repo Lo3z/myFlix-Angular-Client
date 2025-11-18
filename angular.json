@@ -30,7 +30,7 @@
               "src/styles.scss"
             ],
             "server": "src/main.server.ts",
-            "outputPath": "server",
+            "outputPath": "dist",
             "ssr": {
               "entry": "src/server.ts"
             }
