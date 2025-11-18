@@ -1,6 +1,6 @@
 
 export default {
-  basePath: 'MyFlix-Angular-Client',
+  basePath: '/myFlix-Angular-Client',
   supportedLocales: {
   "en-US": ""
 },
