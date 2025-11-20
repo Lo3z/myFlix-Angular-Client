@@ -1,5 +1,8 @@
 # MyFlixAngularClient
 
+This project was originally a React App that was rebuilt in Angular. It uses Angular version 20 and angular material. 
+It calls on API to allow users to register and log in, and generates movie cards for users to view at a glance, view more details about, and add/remove the movies from their favorites. Users can also visit their profile to update their account info or delete their account. 
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.9.
 
 ## Development server

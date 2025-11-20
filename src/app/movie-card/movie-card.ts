@@ -9,6 +9,14 @@ import { MatIcon } from '@angular/material/icon';
 import { MovieInfoDialogComponent } from '../movie-info-dialog/movie-info-dialog';
 import { RouterModule } from '@angular/router';
 
+/**
+ * MovieCardComponent displays a single movie in card format.
+ * 
+ * It supports:
+ * - Displaying movie information.
+ * - Opening dialogs for genre, director, and synopsis.
+ * - Adding/removing movies from the user's favorites.
+*/
 @Component({
   selector: 'app-movie-card',
   imports: [MatCard, MatCardTitle, MatCardSubtitle, CommonModule, MatCardHeader, MatCardActions, MatAnchor, MatIcon, RouterModule],
@@ -17,16 +25,39 @@ import { RouterModule } from '@angular/router';
 })
 
 export class MovieCardComponent {
+  /**
+   * Optional filter array to filter displayed movies.
+  */
   @Input() filter?: any[];
+
+  /**
+   * The movie data to display in this card.
+   */
   @Input() movie: any;
 
+  /**
+   * Observable holding all movies when fetching from API.
+  */
   movies = new BehaviorSubject<any[]>([])
+
+  /**
+   * Array of movie IDs that are the user's favorites.
+  */
   userFavorites: string[] = [];
+
+  /**
+   * Creates an instance of MovieCardComponent.
+   * @param userRegistrationService Service for fetching data from the API.
+   * @param dialog Angular Material dialog service to open info dialogs.
+  */
   constructor(
     public userRegistrationService: UserRegistrationService,
     private dialog: MatDialog
   ) { }
 
+  /**
+   * Loads movies if not provided and initializes favorites from localStorage.
+  */
   ngOnInit(): void {
     if (!this.movie) {
       this.getMovies();
@@ -34,7 +65,9 @@ export class MovieCardComponent {
     this.loadFavorites();
   }
 
-  // Pulling all movies from API to display.
+  /**
+   * Fetches all movies from the backend API and updates the `movies` observable.
+  */
   getMovies(): void {
     this.userRegistrationService.getAllMovies().subscribe((resp: any) => {
       console.log(this.movies);
@@ -42,7 +75,9 @@ export class MovieCardComponent {
     });
   }
 
-  // Loading in favorite movies from user.
+  /**
+   * Loads the current user's favorite movies array from localStorage into `userFavorites`.
+  */
   loadFavorites(): void {
     const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
     if (user && user.Favorites) {
@@ -50,12 +85,21 @@ export class MovieCardComponent {
     }
   }
 
-
+  /**
+   * Checks if a movie is in the user's favorites.
+   * @param movie Movie object to check.
+   * @returns true if the movie is a favorite.
+  */
   isFavorite(movie: any): boolean {
     return this.userFavorites.includes(movie._id);
   }
 
-  // Toggle Favorites function fired when user clicks Favorite icon.
+  /**
+   * Handles toggling a movie in the user's favorites when user clicks the favorite icon in the UI.
+   * Updates localStorage and sends API requests to add or remove the movie.
+   * Handles errors and restores previous state if API fails.
+   * @param movie Movie object to toggle
+  */
   toggleFavorite(movie: any): void {
     const user = JSON.parse(localStorage.getItem('currentUser')!);
     const username = user.Username;
@@ -66,7 +110,6 @@ export class MovieCardComponent {
       return;
     }
 
-    // New Toggle Favorites (functional)
     const isFav = this.userFavorites.includes(movie._id);
 
     if (isFav) {
@@ -92,28 +135,22 @@ export class MovieCardComponent {
         this.updateLocalUser();
       }
     });
-
-    // Old toggle favorites (unfunctional)
-    // if (this.isFavorite(movie)) {
-    //   this.userRegistrationService.removeFavorites(username, movie._id).subscribe(() => {
-    //     this.userFavorites = this.userFavorites.filter(id => id !== movie._id);
-    //     this.updateLocalUser();
-    //   });
-    // } else {
-    //   this.userRegistrationService.addFavorites(username, movie._id).subscribe(() => {
-    //     this.userFavorites.push(movie._id);
-    //     this.updateLocalUser();
-    //   });
-    // }
   }
 
-  // Updates the local storage with most recent user info. 
+  
+  /**
+   * Updates the current user's localStorage entry with the latest favorites.
+  */
   updateLocalUser(): void {
     const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
     user.Favorites = this.userFavorites;
     localStorage.setItem('currentUser', JSON.stringify(user));
   }
 
+  /**
+   * Opens a dialog showing the genre details of the given movie.
+   * @param movie Movie object
+  */
   openGenreDialog(movie: any) {
     this.dialog.open(MovieInfoDialogComponent, {
       width: '350px',
@@ -124,6 +161,10 @@ export class MovieCardComponent {
     });
   }
 
+  /**
+   * Opens a dialog showing the director details of the given movie.
+   * @param movie Movie object
+  */
   openDirectorDialog(movie: any) {
     this.dialog.open(MovieInfoDialogComponent, {
       width: '350px',
@@ -134,6 +175,10 @@ export class MovieCardComponent {
     });
   }
 
+  /**
+   * Opens a dialog showing the synopsis of the given movie.
+   * @param movie Movie object
+  */
   openSynopsisDialog(movie: any) {
     this.dialog.open(MovieInfoDialogComponent, {
       width: '350px',

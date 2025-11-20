@@ -14,6 +14,12 @@ import { P } from '@angular/cdk/keycodes';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
+/**
+ * ProfileViewComponent displays and manages the current user's profile.
+ * 
+ * Allows users to view and update their account information and delete their account.
+*/
+
 @Component({
   selector: 'app-profile-view',
   imports: [
@@ -31,49 +37,65 @@ import { Router } from '@angular/router';
 })
 
 export class ProfileViewComponent implements OnInit {
+  /**
+   * Current user object loaded from localStorage.
+  */
   user: any = {};
-  favoriteMovies: any[] = [];
+  // favoriteMovies: any[] = [];
 
+  /**
+   * Creates an instance of ProfileViewComponent.
+   * @param userRegistrationService Service for user API operations
+   * @param snackBar Angular Material snack bar for notifications
+   * @param router Angular Router for navigation
+  */
   constructor(
     public userRegistrationService: UserRegistrationService, 
     public snackBar: MatSnackBar,
     public router: Router
   ) {}
 
+  /**
+   * Loads the current user from localStorage.
+  */
   ngOnInit(): void {
     this.loadUser();
     console.log("user loaded from localStorage: ", this.user);
   }
 
-  // Load current user from localStorage
+  /**
+   * Handles loading the current user from localStorage. Sets the `user` property if user data exists.
+  */
   loadUser(): void {
     const user = localStorage.getItem('currentUser');
 
     if (user) {
       this.user = JSON.parse(user);
-
-      const movieIDs = this.user.Favorites || [];
-
-      this.loadFavoriteMovies(movieIDs);
       console.log(user);
+      // const movieIDs = this.user.Favorites || [];
+      // this.loadFavoriteMovies(movieIDs);
     }
   }
 
-  loadFavoriteMovies(movieIDs: string[]): void {
-    if (!movieIDs || movieIDs.length == 0) {
-      this.favoriteMovies = [];
-    }
-    else{
+  // loadFavoriteMovies(movieIDs: string[]): void {
+  //   if (!movieIDs || movieIDs.length == 0) {
+  //     this.favoriteMovies = [];
+  //   }
+  //   else{
 
-      this.userRegistrationService.getAllMovies().subscribe({
-        next: (movies) => {
-          this.favoriteMovies = movies.filter((m: { _id: string; }) => movieIDs.includes(m._id));
-        }
-      });
-    }
-  }
+  //     this.userRegistrationService.getAllMovies().subscribe({
+  //       next: (movies) => {
+  //         this.favoriteMovies = movies.filter((m: { _id: string; }) => movieIDs.includes(m._id));
+  //       }
+  //     });
+  //   }
+  // }
 
-
+  /**
+   * Updates the current user's information on the backend.
+   * 
+   * Sends the updated `user` object to the API, updates localStorage, and shows a success snack bar.
+  */
   updateUser(): void {
     const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
     const username = user.Username;
@@ -99,6 +121,12 @@ export class ProfileViewComponent implements OnInit {
     });
   }
 
+  /**
+   * Deletes the current user's account.
+   * 
+   * Prompts for confirmation. On success, clears localStorage, shows a snack bar, and navigates back to the welcome page. 
+   * On error, logs the error and shows a snack bar.
+  */
   deleteUser(): void {
     if (!confirm('Are you sure you want to delete your account?')) return;
 
